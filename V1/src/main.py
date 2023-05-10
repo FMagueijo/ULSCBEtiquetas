@@ -5,6 +5,7 @@ import WidgetVerifications
 
 #App Initial Configuration
 app = Window(themename="darkly")
+app.iconbitmap('img/icon.ico')
 app.title("ULSCB - Etiquetas Ambulatório")
 app.geometry("720x480")
 app.minsize(height=480, width=720)

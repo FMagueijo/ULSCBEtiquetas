@@ -9,24 +9,25 @@ from zebra import Zebra
 
 import requests
 from ttkbootstrap import *
+from ttkbootstrap.dialogs import Messagebox
 from tkinter import messagebox
 
 BASE_SERVICE = 'http://localhost:5000/api/v1/resources/daurgenciaxml'
 
 def getUserData(id):
     
-    if(len(id.get()) != 8): messagebox.showerror("Erro", "Numero de Processo Inválido, tamanho do processo tem de ser sempre 8."); return None 
-        
+      
     BASE_PARAMS = {'episodio': id.get()}
     
     try:
-        response = requests.get(BASE_SERVICE)
-        response.raise_for_status()  
+        response = requests.get(BASE_SERVICE, timeout=.5)
         
     except requests.exceptions.RequestException as e:
-        messagebox.showerror("Erro", e)
+        Messagebox.show_error(title="Erro", message=str(e))
         return None
     
+    if(len(id.get()) != 8): Messagebox.show_error(title="Erro", message="Numero de Processo Inválido, tamanho do processo tem de ser sempre 8."); return None 
+      
 
     if response.status_code == 200:
         try:
@@ -39,7 +40,7 @@ def getUserData(id):
             first_key = list(dict_obj.keys())[0]
             dict_obj = dict_obj[first_key]
         except Exception as e:
-            messagebox.showerror("Erro", f"Episódio {id.get()} não é valido.")
+            Messagebox.show_error(title="Erro", message=str(e))
             return None
          
     return dict_obj
