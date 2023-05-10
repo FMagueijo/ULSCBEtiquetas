@@ -12,4 +12,4 @@ def is_number(char):
 
 
 def Verification_Processo(allText, char):
-    return (char.isdigit() or is_number(char) or allText == "" or char == "") and limit_length(allText, 9)
+    return (char.isdigit() or is_number(char) or allText == "" or char == "") and limit_length(allText, 8)

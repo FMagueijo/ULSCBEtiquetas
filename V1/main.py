@@ -78,14 +78,18 @@ def killChild(container):
 
 def createBasedData(container):
     killChild(container)
-    dataUtente = cf.getUserData(nProcesso)
-    print(dataUtente)
-    for obj in dataUtente:
-        print("HELP")
-        cf.createInputCamp(name=obj.upper(), where=container, value=dataUtente[obj])
-    def OnClick_Imprimir():cf.printLabel()
-    btImprimir = Button(container, text="Imprimir", bootstyle="light", command=OnClick_Imprimir)
-    btImprimir.pack(fill=BOTH, expand=True, padx=25,pady=25)
+    if cf.getUserData(nProcesso) != None:
+        dataUtente = cf.getUserData(nProcesso)
+        print(dataUtente)
+        for obj in dataUtente:
+            print("HELP")
+            cf.createInputCamp(name=obj.upper(), where=container, value=dataUtente[obj])
+        def OnClick_Imprimir():cf.printLabel(dataUtente)
+        btImprimir = Button(container, text="Imprimir", bootstyle="light", command=OnClick_Imprimir)
+        btImprimir.pack(fill=BOTH, expand=True, padx=25,pady=25)
+        btImprimir = Button(container, text="Copiar", bootstyle="light", command=OnClick_Imprimir)
+        btImprimir.pack(fill=BOTH, expand=True, padx=25,pady=25)
+    else: nProcesso.set(""); dataUtente = None
 
 
 #App Loop :b
