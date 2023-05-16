@@ -2,15 +2,10 @@
 from datetime import datetime
 from xml.etree import ElementTree
 import xmltodict
-import os
-from PIL import Image
-import zpl
-from zebra import Zebra
-
+from datetime import datetime
 import requests
 from ttkbootstrap import *
 from ttkbootstrap.dialogs import Messagebox
-from tkinter import messagebox
 
 BASE_SERVICE = 'http://localhost:5000/api/v1/resources/daurgenciaxml'
 
@@ -20,8 +15,8 @@ def getUserData(id):
     BASE_PARAMS = {'episodio': id.get()}
     
     try:
-        response = requests.get(BASE_SERVICE, timeout=.5)
-        
+        response = requests.get(BASE_SERVICE, timeout=.1)
+        response.raise_for_status()
     except requests.exceptions.RequestException as e:
         Messagebox.show_error(title="Erro", message=str(e))
         return None
@@ -31,9 +26,7 @@ def getUserData(id):
 
     if response.status_code == 200:
         try:
-            response = requests.get(BASE_SERVICE, params=BASE_PARAMS)
-            response.raise_for_status()  
-
+            response = requests.get(BASE_SERVICE, params=BASE_PARAMS, timeout=.1)
             root = ElementTree.fromstring(response.content)
 
             dict_obj = xmltodict.parse(ElementTree.tostring(root))
@@ -71,11 +64,12 @@ def printLabel(labelInfo):
 
     for obj in labelInfo:
 
-        outputLabel += bytes(f"^FO10,{70 + 20*currentL}^A0N,14^FD", 'utf-8')
-        outputLabel += bytes(f"{obj}: {labelInfo[obj]}^FS", 'utf-8')
+        outputLabel += bytes(f"^FO10,{70 + 20*currentL}^A0N,14^FD{obj}: {labelInfo[obj]}^FS", 'utf-8')
         if(obj == "episodio" or obj == "processo"): outputLabel += bytes(f"^FO360,40^BY2^BCN,80,Y,N,N^FD{labelInfo[obj]}^FS", 'utf-8')
         currentL += 1
-                  
+    
+    outputLabel += bytes(f"^FO10,{70 + 20*currentL}^A0N,14^FDData Admissão: { datetime.now().isoformat(' ', 'seconds') } ^FS^Xz", 'utf-8')
+         
     mysocket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)         
     host = "localhost" 
     port = 9100   
@@ -83,8 +77,10 @@ def printLabel(labelInfo):
         mysocket.connect((host, port)) #connecting to host
         mysocket.send(outputLabel)#using bytes
         mysocket.close () #closing connection
-    except:
-        print("Error with the connection")
+        with open('last.txt', 'w') as f:
+            f.write(str(outputLabel)+"\n")
+    except Exception as e:
+        Messagebox.show_error(title="Erro", message=str(e))
 
 
 def createInputCamp(name, where, value = "John Doe", txtvariable = None):
