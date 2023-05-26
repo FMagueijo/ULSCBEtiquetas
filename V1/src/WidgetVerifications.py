@@ -13,3 +13,6 @@ def is_number(char):
 
 def Verification_Processo(allText, char):
     return (char.isdigit() or is_number(char) or allText == "" or char == "") and limit_length(allText, 8)
+
+def Verification_Impressora(allText, char):
+    return limit_length(allText, 64)

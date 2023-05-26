@@ -1,4 +1,5 @@
 from ttkbootstrap import *
+from tkinter.font import Font
 import customFunctions as cf
 import WidgetVerifications
 
@@ -13,8 +14,9 @@ app.minsize(height=480, width=720)
 
 #Variables
 nProcesso = StringVar()
+host = StringVar()
+host.set("localhost")
 dataUtente = []
-UtenteNome = StringVar()
 
 #MainCon Frame
 mainCon = LabelFrame(app, border_color=None, bootstyle="secondary", text="Dados do Utente")
@@ -22,20 +24,26 @@ mainCon.grid(row=1, column=0, sticky="nsew", padx=20,pady=10)
 
 
 #Topbar Frame
-topbar = LabelFrame(app, border_color=None, bootstyle="secondary", text="Nº de Processo")
+topbar = LabelFrame(app, border_color=None, bootstyle="secondary", text="Entrada de dados")
 topbar.grid(row=0, column=0, sticky="nsew", padx=20,pady=20)
 
 #Topbar Content
 
+Label(topbar, text="Nome da Impressora", bootstyle="light").grid(row=0, column=0, sticky="nsew", padx=25,pady=10)
+Label(topbar, text="Numero de Utente", bootstyle="light").grid(row=1, column=0, sticky="nsew", padx=25,pady=10)
+
 #--|Processo Entry Field
+Verifications_Impressora = (app.register(WidgetVerifications.Verification_Impressora), '%P', '%S')
+etImpressora = Entry(topbar, textvariable=host, bootstyle="light", validate='all', validatecommand=(Verifications_Impressora))
+etImpressora.grid(row=0, column=1, sticky="nsew", padx=25,pady=10)
+
 Verifications_Processo = (app.register(WidgetVerifications.Verification_Processo), '%P', '%S')
 etProcesso = Entry(topbar, textvariable=nProcesso, bootstyle="light", validate='all', validatecommand=(Verifications_Processo))
-etProcesso.grid(row=0, column=0, sticky="nsew", padx=25,pady=25)
+etProcesso.grid(row=1, column=1, sticky="nsew", padx=25,pady=10)
 
-#--|Processo Entry Button
 def OnClick_Processo(): createBasedData(frame)
 btProcesso = Button(topbar, text="Submeter", bootstyle="light", command=OnClick_Processo)
-btProcesso.grid(row=0, column=1, sticky="nsew", padx=25,pady=25)
+btProcesso.grid(row=2, column=1, columnspan=2, sticky="nsew", padx=25,pady=10)
 
 
 #Main Frame Content
@@ -62,16 +70,17 @@ canvas.configure(yscrollcommand=scrollbar.set)
 scrollbar.pack(side="right", fill="y")
 
 #Topbar Grid Configuration
-topbar.grid_columnconfigure(0, weight=3)
-topbar.grid_columnconfigure(1, weight=1)
-topbar.grid_rowconfigure(0, weight=1)
+topbar.grid_columnconfigure(0, weight=1)
+topbar.grid_columnconfigure(1, weight=100)
+topbar.grid_rowconfigure(0, weight=100)
+topbar.grid_rowconfigure(1, weight=100)
+topbar.grid_rowconfigure(2, weight=100)
 
 
 #App Grid Configuration
 app.grid_columnconfigure(0, weight=1)
 app.grid_rowconfigure(0, weight=1)
-app.grid_rowconfigure(1, weight=50)
-app.grid_rowconfigure(2, weight=10)
+app.grid_rowconfigure(1, weight=100)
 
 def killChild(container):
     for child in container.winfo_children():
@@ -83,12 +92,10 @@ def createBasedData(container):
         dataUtente = cf.getUserData(nProcesso)
         print(dataUtente)
         for obj in dataUtente:
-            print("HELP")
+            print("Birth Child")
             cf.createInputCamp(name=obj.upper(), where=container, value=dataUtente[obj])
-        def OnClick_Imprimir():cf.printLabel(dataUtente)
+        def OnClick_Imprimir():cf.printLabel(dataUtente, host)
         btImprimir = Button(container, text="Imprimir", bootstyle="light", command=OnClick_Imprimir)
-        btImprimir.pack(fill=BOTH, expand=True, padx=25,pady=25)
-        btImprimir = Button(container, text="Copiar", bootstyle="light", command=OnClick_Imprimir)
         btImprimir.pack(fill=BOTH, expand=True, padx=25,pady=25)
     else: nProcesso.set(""); dataUtente = None
 
