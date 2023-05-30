@@ -3,7 +3,6 @@ from tkinter.font import Font
 import customFunctions as cf
 import WidgetVerifications
 
-
 #App Initial Configuration
 app = Window(themename="darkly")
 app.iconbitmap('icon.ico')
@@ -14,6 +13,8 @@ app.minsize(height=480, width=720)
 
 #Variables
 nProcesso = StringVar()
+bLocal = BooleanVar()
+bLocal.set(False)
 host = StringVar()
 host.set("localhost")
 dataUtente = []
@@ -39,7 +40,10 @@ etImpressora.grid(row=0, column=1, sticky="nsew", padx=25,pady=10)
 
 Verifications_Processo = (app.register(WidgetVerifications.Verification_Processo), '%P', '%S')
 etProcesso = Entry(topbar, textvariable=nProcesso, bootstyle="light", validate='all', validatecommand=(Verifications_Processo))
-etProcesso.grid(row=1, column=1, sticky="nsew", padx=25,pady=10)
+etProcesso.grid(row=1, column=1, sticky="nsew", padx=25,pady=10, )
+
+Checkbutton(etImpressora,takefocus=0, variable=bLocal, bootstyle="success-round-toggle").pack(anchor="e", side="right", padx=1,pady=6)
+Label(etImpressora,takefocus=0, text="IP", bootstyle="light").pack(anchor="e", side="right", padx=1,pady=6)
 
 def OnClick_Processo(): createBasedData(frame)
 btProcesso = Button(topbar, text="Submeter", bootstyle="light", command=OnClick_Processo)
@@ -94,9 +98,10 @@ def createBasedData(container):
         for obj in dataUtente:
             print("Birth Child")
             cf.createInputCamp(name=obj.upper(), where=container, value=dataUtente[obj])
-        def OnClick_Imprimir():cf.printLabel(dataUtente, host)
+        def OnClick_Imprimir():cf.printLabel(dataUtente, host, bLocal)
         btImprimir = Button(container, text="Imprimir", bootstyle="light", command=OnClick_Imprimir)
         btImprimir.pack(fill=BOTH, expand=True, padx=25,pady=25)
+        
     else: nProcesso.set(""); dataUtente = None
 
 

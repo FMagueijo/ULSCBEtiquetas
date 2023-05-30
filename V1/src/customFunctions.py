@@ -5,12 +5,12 @@ import requests
 import xmltodict
 from xml.etree import ElementTree
 from datetime import datetime
+import win32print 
 
 BASE_SERVICE = 'http://localhost:5000/api/v1/resources/daurgenciaxml'
 
 def getUserData(id):
-    
-      
+     
     BASE_PARAMS = {'episodio': id.get()}
     
     try:
@@ -57,7 +57,7 @@ def getUserData(id):
 
 
 
-def printLabel(labelInfo, host):
+def printLabel(labelInfo, host, bIp):
 
     outputLabel = b"^XA^CI28^FO5,5^GB627.5,150,2^FS^FO10,15^A0N,26^FDULSCB - Ambulatorio^FS^FO10,45^A0N,16^FDINFORMACAO DO UTENTE^FS"
     currentL = 0
@@ -73,12 +73,37 @@ def printLabel(labelInfo, host):
     mysocket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)         
     host = host.get()
     port = 9100   
+
+    if(bIp.get()):
+        try:           
+            mysocket.connect((host, port))
+            mysocket.send(outputLabel)
+            mysocket.close ()
+            with open('historico.txt', 'a') as f:
+                f.write(f"({datetime.now().isoformat(' ', 'seconds')}) Imprimida/Printed => {str(outputLabel)} \n")
+                Messagebox.show_info(title="Successo", message="Etiqueta Imprimida com sucesso")
+        except Exception as e:
+            Messagebox.show_error(title="Erro", message=str(e))
+        
+        return None
+    
     try:           
-        mysocket.connect((host, port)) #connecting to host
-        mysocket.send(outputLabel)#using bytes
-        mysocket.close () #closing connection
-        with open('history.txt', 'a') as f:
+        printer_handle = win32print.OpenPrinter(host)
+
+        win32print.StartDocPrinter(printer_handle, 1, ("Label Printing", None, "RAW"))
+
+        win32print.StartPagePrinter(printer_handle)
+
+        win32print.WritePrinter(printer_handle, outputLabel)
+
+        win32print.EndPagePrinter(printer_handle)
+        win32print.EndDocPrinter(printer_handle)
+
+        win32print.ClosePrinter(printer_handle)
+        
+        with open('historico.txt', 'a') as f:
             f.write(f"({datetime.now().isoformat(' ', 'seconds')}) Imprimida/Printed => {str(outputLabel)} \n")
+            Messagebox.show_info(title="Successo", message="Etiqueta Imprimida com sucesso")
     except Exception as e:
         Messagebox.show_error(title="Erro", message=str(e))
 
