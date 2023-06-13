@@ -8,32 +8,26 @@ app = Flask(__name__)
 app.debug = True
 
 
-# dados utente aleatorios
-dadosurgencia = [
+# Random user data
+users = [
     {'processo': '82122023',
      'nome'  : 'Francisco Gomes Gonçalves Magueijo',
-     'data'  : '16-05-2022',
-     'hora'  : '12:23'},
-    {'episodio': '80250123',
-     'nome'  : 'Carlos Asdrubal Leitão ',
-     'data'  : '13-05-2022',
-     'hora'  : '02:23'},
-    {'episodio': '81010296',
+     'dn'  : '16-05-2022'},
+    {'processo': '80250123',
+     'nome'  : 'Carlos Asdrubal Leitão',
+     'dn'  : '13-05-2022'},
+    {'processo': '81010296',
      'nome'  : 'Cavaco Vieira Silva Pires Arizmendi Mancini Mourinho Guardiola Paulo Portas Vilhena Camilo',
-     'data'  : '01-02-2022',
-     'hora'  : '20:01'},
-    {'episodio': '80123456',
+     'dn'  : '01-02-2022'},
+    {'processo': '80123456',
      'nome'  : 'Cataria Rocha da Silva Cunha Dias',
-     'data'  : '16-05-2022',
-     'hora'  : '12:23'},
-    {'episodio': '80654785',
+     'dn'  : '16-05-2022'},
+    {'processo': '80654785',
      'nome'  : 'Marta Feliz Temido Ribeiro',
-     'data'  : '16-05-2022',
-     'hora'  : '10:30'},
-    {'episodio': '80127458',
+     'dn'  : '16-05-2022'},
+    {'processo': '80127458',
      'nome'  : 'António Vitorina de Almeida Silva da Costa Paiva',
-     'data'  : '10-05-2022',
-     'hora'  : '16:23'}
+     'dn'  : '10-05-2022'}
 ]
 
 
@@ -43,62 +37,52 @@ def home():
     return '<h1>Web services para Episodios Urgencia</h1>\n'
 
 # JSON
-# Get dados urgencia
-@app.route('/api/v1/resources/daurgencia', methods=['GET'])
-def getUrgencia():
-    if 'episodio' in request.args:
-        episodio = request.args.get('episodio')
+# Get user data
+@app.route('/api/v1/resources/users', methods=['GET'])
+def getUsers():
+    if 'processo' in request.args:
+        processo = request.args.get('processo')
     else:
-        return jsonify({'resultUrgencia':''})
-    # find the episode
-    for dados in range (len(dadosurgencia)):
-        #print (dados)
-        for key, value in dadosurgencia[dados].items():
-            #print (value)
-            if episodio == value:
-                return (jsonify(dadosurgencia[dados]))
-                break
-        
-    return jsonify({'resultUrgencia':''})
+        return jsonify({'result': ''})
 
-# Get dados urgencia xml
+    # Find the user by process number
+    for user in users:
+        if processo == user['processo']:
+            return jsonify(user)
+
+    return jsonify({'result': ''})
+
+# Get user data in XML format
 """
-    <urgencia>
-        <episodio></episodio>
+    <user>
+        <processo></processo>
         <nome></nome>
-        <data></data>
-        <hora></hora>
-    </urgencia>
+        <dn></dn>
+    </user>
 """
-@app.route('/api/v1/resources/daurgenciaxml', methods=['GET'])
-def getUrgenciaxml():
-    print("Ola " + str(request.args))
-
-    if 'episodio' in request.args:
-        episodio = request.args.get('episodio')
+@app.route('/api/v1/resources/usersxml', methods=['GET'])
+def getUsersXml():
+    if 'processo' in request.args:
+        processo = request.args.get('processo')
     else:
-        return jsonify({'resultUrgencia':''})
-    # find the episode
-    for dados in range (len(dadosurgencia)):
-        #print (dados)
-        for key, value in dadosurgencia[dados].items():
-            #print (value)
-            if episodio == value:
-                # loop again
-                urgencia = dadosurgencia[dados]
-                break
-        
-    root = ET.Element('urgencia')
-    episodioxml = ET.SubElement(root, 'episodio')
-    episodioxml.text = str(episodio)
-    nome = ET.SubElement(root, 'nome')
-    nome.text = str(urgencia['nome'])
-    data = ET.SubElement(root, 'data')
-    data.text = str(urgencia['data'])
-    hora = ET.SubElement (root, 'hora')
-    hora.text = str(urgencia['hora'])
-    
-    return Response (ET.tostring(root).decode('utf-8'), mimetype='text/xml')
+        return jsonify({'result': ''})
+
+    # Find the user by process number
+    for user in users:
+        if processo == user['processo']:
+            # Create XML response
+            root = ET.Element('user')
+            processo_xml = ET.SubElement(root, 'processo')
+            processo_xml.text = str(user['processo'])
+            nome = ET.SubElement(root, 'nome')
+            nome.text = str(user['nome'])
+            dn = ET.SubElement(root, 'dn')
+            dn.text = str(user['dn'])
+
+            return Response(ET.tostring(root).decode('utf-8'), mimetype='text/xml')
+
+    return jsonify({'result': ''})
+
 
 
 

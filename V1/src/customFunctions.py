@@ -7,14 +7,14 @@ from xml.etree import ElementTree
 from datetime import datetime
 import win32print 
 
-BASE_SERVICE = 'http://localhost:5000/api/v1/resources/daurgenciaxml'
+BASE_SERVICE = 'http://localhost:5000/api/v1/resources/usersxml'
 
 def getUserData(id):
      
-    BASE_PARAMS = {'episodio': id.get()}
+    BASE_PARAMS = {'processo': id.get()}
     
     try:
-        response = requests.get(BASE_SERVICE, timeout=.1)
+        response = requests.get(BASE_SERVICE, timeout=.5)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         Messagebox.show_error(title="Erro", message=str(e))
@@ -40,6 +40,7 @@ def getUserData(id):
     
 
 '''
+Velha
 ^XA
 ^CI28
 ^FO5,5^GB627.5,150,2^FS
@@ -54,21 +55,33 @@ def getUserData(id):
 '''    
 
 
+'''
+Nova
+^XA
+^CI28
+^FO5,5^GB390,150,2^FS
+^FO10,95^A0N,14^FDProcesso: 123456^FS
+^FO10,115^A0N,14^FDNome: Fernandes de Sousa e Sá Carneiro de Niro^FS
+^FO10,135^A0N,14^FDData de Nascimento: 10-05-2023^FS
+^FO80,15^BY2,2,50^BC^FD83023059^FS
+^XZ
+'''
 
 
 
 def printLabel(labelInfo, host, bIp):
 
-    outputLabel = b"^XA^CI28^FO5,5^GB627.5,150,2^FS^FO10,15^A0N,26^FDULSCB - Ambulatorio^FS^FO10,45^A0N,16^FDINFORMACAO DO UTENTE^FS"
+    outputLabel = b"^XA^CI28^FO5,5^GB390,150,2^FS"
     currentL = 0
 
     for obj in labelInfo:
 
-        outputLabel += bytes(f"^FO10,{70 + 20*currentL}^A0N,14^FD{obj}: {labelInfo[obj]}^FS", 'utf-8')
-        if(obj == "episodio" or obj == "processo"): outputLabel += bytes(f"^FO360,40^BY2^BCN,80,Y,N,N^FD{labelInfo[obj]}^FS", 'utf-8')
+        outputLabel += bytes(f"^FO10,{95 + 20*currentL}^A0N,14^FD{obj.upper()}: {labelInfo[obj]}^FS", 'utf-8')
+        if(obj == "episodio" or obj == "processo"): outputLabel += bytes(f"^FO80,15^BY2,2,50^BC^FD{labelInfo[obj]}^FS", 'utf-8')
         currentL += 1
     
-    outputLabel += bytes(f"^FO10,{70 + 20*currentL}^A0N,14^FDData Admissão: { datetime.now().isoformat(' ', 'seconds') } ^FS^Xz", 'utf-8')
+    # Nao Usado # outputLabel += bytes(f"^FO10,{70 + 20*currentL}^A0N,14^FDData Admissão: { datetime.now().isoformat(' ', 'seconds') } ^FS", 'utf-8')
+    outputLabel += bytes(f"^Xz", 'utf-8')
          
     mysocket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)         
     host = host.get()
