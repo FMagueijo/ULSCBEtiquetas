@@ -7,14 +7,12 @@ import WidgetVerifications
 app = Window(themename="darkly")
 app.iconbitmap('icon.ico')
 app.title("ULSCB - Etiquetas Ambulatório")
-app.geometry("720x480")
-app.minsize(height=480, width=720)
-
+app.geometry("1280x720")
+app.minsize(height=720, width=1280)
+app.state("zoomed")
 
 #Variables
 nProcesso = StringVar()
-bLocal = BooleanVar()
-bLocal.set(False)
 host = StringVar()
 host.set("localhost")
 dataUtente = []
@@ -35,15 +33,13 @@ Label(topbar, text="Numero de Utente", bootstyle="light").grid(row=1, column=0, 
 
 #--|Processo Entry Field
 Verifications_Impressora = (app.register(WidgetVerifications.Verification_Impressora), '%P', '%S')
-etImpressora = Entry(topbar, textvariable=host, bootstyle="light", validate='all', validatecommand=(Verifications_Impressora))
+etImpressora = Label(topbar, textvariable=host, bootstyle="light")
 etImpressora.grid(row=0, column=1, sticky="nsew", padx=25,pady=10)
 
 Verifications_Processo = (app.register(WidgetVerifications.Verification_Processo), '%P', '%S')
 etProcesso = Entry(topbar, textvariable=nProcesso, bootstyle="light", validate='all', validatecommand=(Verifications_Processo))
 etProcesso.grid(row=1, column=1, sticky="nsew", padx=25,pady=10, )
 
-Checkbutton(etImpressora,takefocus=0, variable=bLocal, bootstyle="success-round-toggle").pack(anchor="e", side="right", padx=1,pady=6)
-Label(etImpressora,takefocus=0, text="IP", bootstyle="light").pack(anchor="e", side="right", padx=1,pady=6)
 
 def OnClick_Processo(): createBasedData(frame)
 btProcesso = Button(topbar, text="Submeter", bootstyle="light", command=OnClick_Processo)
@@ -98,7 +94,7 @@ def createBasedData(container):
         for obj in dataUtente:
             print("Birth Child")
             cf.createInputCamp(name=obj.upper(), where=container, value=dataUtente[obj])
-        def OnClick_Imprimir():cf.printLabel(dataUtente, host, bLocal)
+        def OnClick_Imprimir():cf.printLabel(dataUtente, host)
         btImprimir = Button(container, text="Imprimir", bootstyle="light", command=OnClick_Imprimir)
         btImprimir.pack(fill=BOTH, expand=True, padx=25,pady=25)
         

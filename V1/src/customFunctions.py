@@ -69,37 +69,44 @@ Nova
 
 
 
-def printLabel(labelInfo, host, bIp):
+def printLabel(labelInfo, host):
 
     outputLabel = b"^XA^CI28^FO5,5^GB390,150,2^FS"
     currentL = 0
 
     for obj in labelInfo:
 
-        outputLabel += bytes(f"^FO10,{95 + 20*currentL}^A0N,14^FD{obj.upper()}: {labelInfo[obj]}^FS", 'utf-8')
-        if(obj == "episodio" or obj == "processo"): outputLabel += bytes(f"^FO80,15^BY2,2,50^BC^FD{labelInfo[obj]}^FS", 'utf-8')
+        outputLabel += bytes(f"^FO10,{90 + 20*currentL}^A0N,19^FD{obj.upper()}: {labelInfo[obj]}^FS", 'utf-8')
+        if(obj == "episodio" or obj == "processo"): outputLabel += bytes(f"^FO140,15^BY1,1,50^BC^FD{labelInfo[obj]}^FS", 'utf-8')
         currentL += 1
     
     # Nao Usado # outputLabel += bytes(f"^FO10,{70 + 20*currentL}^A0N,14^FDData Admissão: { datetime.now().isoformat(' ', 'seconds') } ^FS", 'utf-8')
     outputLabel += bytes(f"^Xz", 'utf-8')
-         
+    
     mysocket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)         
     host = host.get()
     port = 9100   
-
-    if(bIp.get()):
-        try:           
-            mysocket.connect((host, port))
-            mysocket.send(outputLabel)
-            mysocket.close ()
-            with open('historico.txt', 'a') as f:
-                f.write(f"({datetime.now().isoformat(' ', 'seconds')}) Imprimida/Printed => {str(outputLabel)} \n")
-                Messagebox.show_info(title="Successo", message="Etiqueta Imprimida com sucesso")
-        except Exception as e:
-            Messagebox.show_error(title="Erro", message=str(e))
-        
-        return None
     
+    try:           
+        mysocket.connect((host, port))
+        mysocket.send(outputLabel)
+        mysocket.close ()
+        with open('historico.txt', 'a') as f:
+            f.write(f"({datetime.now().isoformat(' ', 'seconds')}) Imprimida/Printed => {str(outputLabel)} \n")
+            Messagebox.show_info(title="Successo", message="Etiqueta Imprimida com sucesso")
+    except Exception as e:
+        Messagebox.show_error(title="Erro", message=str(e))
+        
+    '''
+    
+    if(bIp.get()):
+        
+    
+        return None
+    '''
+
+
+    '''
     try:           
         printer_handle = win32print.OpenPrinter(host)
 
@@ -119,7 +126,7 @@ def printLabel(labelInfo, host, bIp):
             Messagebox.show_info(title="Successo", message="Etiqueta Imprimida com sucesso")
     except Exception as e:
         Messagebox.show_error(title="Erro", message=str(e))
-
+    '''
 
 def createInputCamp(name, where, value = "John Doe", txtvariable = None):
     nameFrame = LabelFrame(where, border_color=None, text=name)

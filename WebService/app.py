@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.debug = True
 
 
-# Random user data
+
 users = [
     {'processo': '82122023',
      'nome'  : 'Francisco Gomes Gonçalves Magueijo',
