@@ -103,10 +103,7 @@ def printLabel(labelInfo, host):
         
     
         return None
-    '''
-
-
-    '''
+    
     try:           
         printer_handle = win32print.OpenPrinter(host)
 

@@ -7,15 +7,27 @@ import WidgetVerifications
 app = Window(themename="darkly")
 app.iconbitmap('icon.ico')
 app.title("ULSCB - Etiquetas Ambulatório")
-app.geometry("1280x720")
-app.minsize(height=720, width=1280)
-app.state("zoomed")
+app.geometry("720x576")
+app.resizable(0,0)
+app.position_center()
+
+#Function that gets the printer name/ip
+def getPrinter():
+    try:
+        f = open("host.txt")
+    except FileNotFoundError:
+        with open('host.txt', 'a') as f:
+            host.set("localhost")
+            f.write(f"localhost")
+    else:
+        with open("host.txt") as f:
+            host.set(f.readlines())
 
 #Variables
 nProcesso = StringVar()
 host = StringVar()
-host.set("localhost")
 dataUtente = []
+getPrinter()
 
 #MainCon Frame
 mainCon = LabelFrame(app, border_color=None, bootstyle="secondary", text="Dados do Utente")
@@ -82,10 +94,6 @@ app.grid_columnconfigure(0, weight=1)
 app.grid_rowconfigure(0, weight=1)
 app.grid_rowconfigure(1, weight=100)
 
-def killChild(container):
-    for child in container.winfo_children():
-        child.destroy()
-
 def createBasedData(container):
     killChild(container)
     if cf.getUserData(nProcesso) != None:
@@ -101,5 +109,8 @@ def createBasedData(container):
     else: nProcesso.set(""); dataUtente = None
 
 
+def killChild(container):
+    for child in container.winfo_children():
+        child.destroy()
 #App Loop :b
 app.mainloop()
