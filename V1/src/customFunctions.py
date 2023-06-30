@@ -5,12 +5,11 @@ import requests
 import xmltodict
 from xml.etree import ElementTree
 from datetime import datetime
-import win32print 
+import json
 
-BASE_SERVICE = 'http://localhost:5000/api/v1/resources/usersxml'
-
+BASE_SERVICE = ''
+#
 def getUserData(id):
-     
     BASE_PARAMS = {'processo': id.get()}
     
     try:
@@ -37,24 +36,6 @@ def getUserData(id):
          
     return dict_obj
 
-    
-
-'''
-Velha
-^XA
-^CI28
-^FO5,5^GB627.5,150,2^FS
-^FO10,15^A0N,26^FDULSCB - Ambulatório^FS
-^FO10,45^A0N,16^FDINFORMAÇÃO DO UTENTE^FS
-^FO10,70^A0N,14^FDNome: Fernandes de Sousa e Sá Carneiro de Niro^FS
-^FO10,90^A0N,14^FDProcesso: 123456^FS
-^FO10,110^A0N,14^FDData de Admissão: 10-05-2023^FS
-^FO10,130^A0N,14^FDDN: 19-02-2005^FS ^FO150,130^A0N,14^FDM / 18 anos^FS
-^FO360,40^BY2^BCN,80,Y,N,N^FD83023059^FS
-^XZ
-'''    
-
-
 '''
 Nova
 ^XA
@@ -67,8 +48,7 @@ Nova
 ^XZ
 '''
 
-
-
+#Prints Above Label with number of fields given on the label Info
 def printLabel(labelInfo, host):
 
     outputLabel = b"^XA^CI28^FO5,5^GB390,150,2^FS"
@@ -96,35 +76,8 @@ def printLabel(labelInfo, host):
             Messagebox.show_info(title="Successo", message="Etiqueta Imprimida com sucesso")
     except Exception as e:
         Messagebox.show_error(title="Erro", message=str(e))
-        
-    '''
-    
-    if(bIp.get()):
-        
-    
-        return None
-    
-    try:           
-        printer_handle = win32print.OpenPrinter(host)
 
-        win32print.StartDocPrinter(printer_handle, 1, ("Label Printing", None, "RAW"))
-
-        win32print.StartPagePrinter(printer_handle)
-
-        win32print.WritePrinter(printer_handle, outputLabel)
-
-        win32print.EndPagePrinter(printer_handle)
-        win32print.EndDocPrinter(printer_handle)
-
-        win32print.ClosePrinter(printer_handle)
-        
-        with open('historico.txt', 'a') as f:
-            f.write(f"({datetime.now().isoformat(' ', 'seconds')}) Imprimida/Printed => {str(outputLabel)} \n")
-            Messagebox.show_info(title="Successo", message="Etiqueta Imprimida com sucesso")
-    except Exception as e:
-        Messagebox.show_error(title="Erro", message=str(e))
-    '''
-
+#Create Row of Given Data
 def createInputCamp(name, where, value = "John Doe", txtvariable = None):
     nameFrame = LabelFrame(where, border_color=None, text=name)
     nameFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=True, padx=20, pady=10)
